@@ -1,6 +1,6 @@
 class Lexer:
-    def __int__(self, code):
-        self.input = code
+    #def __int__(self):
+        #self.input = code
 
     tokens = []
 
@@ -23,9 +23,9 @@ class Lexer:
 
     def tokenize(self, lexeme):
         if lexeme in self.tok_lookup:
-            self.tokens.append(self.tok_lookup[lexeme])
+            return self.tok_lookup[lexeme]
 
-    def lexer(self):
+    def lex(self):
 
         string = '''
         public class Test {
@@ -58,25 +58,35 @@ class Lexer:
 
         white_space = ' '
         lexeme = ''
+        loc = []
 
-        for i, char in enumerate(self.input):
+        for i, char in enumerate(string):
             if char == '*':
                 if string[i - 1] == '/':
                     lexeme += '/*'
+                    loc.append(i)
                 elif string[i + 1] == '/':
                     lexeme += '*/'
+                    loc.append(i)
                 else:
                     lexeme += '*'
+                    loc.append(i)
             elif char == '/':
                 if string[i + 1] != '*' and string[i - 1] != '*':
                     lexeme += '/'
+                    loc.append(i)
                 else:
                     continue
             else:
                 if char != white_space:
                     lexeme += char  # adding a char each time
+                    loc.append(i)
             if (i + 1 < len(string)):  # prevents error
                 if string[i + 1] == white_space or string[i + 1] in KEYWORDS or lexeme in KEYWORDS:  # if next char == ' '
                     if lexeme != '':
                         print(lexeme.replace('\n', '<newline>'))
+                        print(loc)
+                        if self.tokenize(lexeme) is not None:
+                            self.tokens.append((self.tokenize(lexeme), loc[0]))
+                        loc = []
                         lexeme = ''
