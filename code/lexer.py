@@ -7,16 +7,17 @@ class Lexer:
     tok_lookup = {
         '}': 'RightBracket',
         '{': 'LeftBracket',
-        '(': 'LeftParen',
-        ')': 'RightParen',
-        'public': 'Start',
+        # '(': 'LeftParen',
+        # ')': 'RightParen',
+        'public': 'Public',
+        'static': 'Static',
         'void': 'Void',
+        'class': 'Class',
         'if': 'Decision',
-        'if-else': 'Decision',
-        'if-else-if': 'Decision',
+        'else': 'Decision2',
         'switch': 'Decision',
         'while': 'Loop',
-        'do-while': 'Loop',
+        'do': 'DoLoop',
         'for': 'Loop'
     }
 
@@ -26,33 +27,10 @@ class Lexer:
 
     def lex(self):
 
-        # string = '''
-        # public class Test {
-        #
-        #    public static void main(String args[]) {
-        #       int [] numbers = {10, 20, 30, 40, 50};
-        #       // printing !
-        #       for(int x : numbers ) {
-        #          System.out.print( x );
-        #          System.out.print(",");
-        #       }
-        #       System.out.print("\n");
-        #       String [] names = {"James", "Larry", "Tom", "Lacy"};
-        #       /*
-        #       looping over
-        #       */
-        #       for( String name : names ) {
-        #          System.out.print( name );
-        #          System.out.print(",");
-        #       }
-        #    }
-        # }
-        # '''
-
         symbols = ['{', '}', '(', ')', '[', ']', '.', '"', '*', '\n', ':', ',']  # single-char keywords
         other_symbols = ['\\', '/*', '*/']  # multi-char keywords
-        keywords = ['public', 'class', 'void', 'main', 'String', 'int', 'if',
-                    'if-else', 'if-else-if', 'switch', 'for', 'while', 'do-while']
+        keywords = ['public', 'private', 'class', 'static', 'void', 'main', 'String', 'int', 'if',
+                    'else', 'switch', 'for', 'while', 'do']
         KEYWORDS = symbols + other_symbols + keywords
 
         white_space = ' '
@@ -83,9 +61,9 @@ class Lexer:
             if (i + 1 < len(self.string)):  # prevents error
                 if self.string[i + 1] == white_space or self.string[i + 1] in KEYWORDS or lexeme in KEYWORDS:  # if next char == ' '
                     if lexeme != '':
-                        print(lexeme.replace('\n', '<newline>'))
-                        print(loc)
-                        if self.tokenize(lexeme) is not None:
-                            self.tokens.append((self.tokenize(lexeme), loc[0]))
+                        #print(lexeme.replace('\n', '<newline>'))
+                        #print(loc)
+                        if self.tokenize(lexeme.strip()) is not None:
+                            self.tokens.append([self.tokenize(lexeme.strip()), loc[0], loc[-1]])
                         loc = []
                         lexeme = ''
